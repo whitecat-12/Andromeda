@@ -369,44 +369,6 @@
             display: block;
         }
 
-        /* Features Section */
-        .features {
-            background: var(--secondary);
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-            border-color: var(--highlight);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            color: var(--highlight);
-            margin-bottom: 20px;
-        }
-
-        .feature-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
         /* Simulation Section */
         .simulation {
             background: var(--secondary);
@@ -543,43 +505,6 @@
 
         .gallery-item:hover .gallery-overlay {
             transform: translateY(0);
-        }
-
-        /* Facts Section */
-        .facts {
-            background: var(--secondary);
-        }
-
-        .facts-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-        }
-
-        .fact-box {
-            text-align: center;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .fact-box:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .fact-icon {
-            font-size: 2rem;
-            color: var(--highlight);
-            margin-bottom: 15px;
-        }
-
-        .fact-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--highlight);
         }
 
         /* Footer */
@@ -801,9 +726,7 @@
                             <a href="simulasi-tata-surya.html" class="simulation-link"><i class="fas fa-solar-panel"></i> Simulasi Tata Surya</a>
                         </div>
                     </li>
-                    <li><a href="#features"><i class="fas fa-list"></i> Fitur</a></li>
                     <li><a href="#gallery"><i class="fas fa-images"></i> Galeri</a></li>
-                    <li><a href="#facts"><i class="fas fa-chart-bar"></i> Fakta</a></li>
                     <li><a href="#contact"><i class="fas fa-envelope"></i> Kontak</a></li>
                 </ul>
             </nav>
@@ -848,7 +771,7 @@
                 <a href="#" class="btn">Pelajari Lebih Lanjut</a>
             </div>
             <div class="about-image">
-                <img src="https://images.unsplash.com/photo-1446776653964-20c1d3a81b06?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2071&q=80" alt="Galaksi Andromeda">
+                <img src="https://images.unsplash.com/photo-1502134249126-9f3755a50d78?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Galaksi Andromeda">
             </div>
         </div>
     </section>
@@ -910,36 +833,6 @@
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <div class="section-title">
-            <h2>Fitur Menarik</h2>
-        </div>
-        <div class="features-grid">
-            <div class="feature-card fade-in">
-                <div class="feature-icon">
-                    <i class="fas fa-star"></i>
-                </div>
-                <h3>Triliunan Bintang</h3>
-                <p>Andromeda diperkirakan memiliki sekitar 1 triliun bintang, membuatnya jauh lebih besar dari Bima Sakti.</p>
-            </div>
-            <div class="feature-card fade-in">
-                <div class="feature-icon">
-                    <i class="fas fa-satellite"></i>
-                </div>
-                <h3>Galaksi Satelit</h3>
-                <p>Andromeda memiliki setidaknya 14 galaksi kerdil yang mengorbitnya, termasuk M32 dan M110.</p>
-            </div>
-            <div class="feature-card fade-in">
-                <div class="feature-icon">
-                    <i class="fas fa-expand-arrows-alt"></i>
-                </div>
-                <h3>Tabrakan Galaksi</h3>
-                <p>Dalam 4,5 miliar tahun, Andromeda akan bertabrakan dengan Bima Sakti membentuk galaksi baru.</p>
-            </div>
-        </div>
-    </section>
-
     <!-- Gallery Section -->
     <section class="gallery" id="gallery">
         <div class="section-title">
@@ -967,43 +860,6 @@
         </div>
     </section>
 
-    <!-- Facts Section -->
-    <section class="facts" id="facts">
-        <div class="section-title">
-            <h2>Fakta Menarik</h2>
-        </div>
-        <div class="facts-container">
-            <div class="fact-box fade-in">
-                <div class="fact-icon">
-                    <i class="fas fa-ruler"></i>
-                </div>
-                <div class="fact-number">220.000</div>
-                <p>Tahun Cahaya (Diameter)</p>
-            </div>
-            <div class="fact-box fade-in">
-                <div class="fact-icon">
-                    <i class="fas fa-road"></i>
-                </div>
-                <div class="fact-number">2,5 Juta</div>
-                <p>Tahun Cahaya (Jarak dari Bumi)</p>
-            </div>
-            <div class="fact-box fade-in">
-                <div class="fact-icon">
-                    <i class="fas fa-star"></i>
-                </div>
-                <div class="fact-number">1 Triliun</div>
-                <p>Jumlah Bintang</p>
-            </div>
-            <div class="fact-box fade-in">
-                <div class="fact-icon">
-                    <i class="fas fa-clock"></i>
-                </div>
-                <div class="fact-number">10 Miliar</div>
-                <p>Usia (Tahun)</p>
-            </div>
-        </div>
-    </section>
-
     <!-- Footer -->
     <footer id="contact">
         <div class="footer-content">
@@ -1011,10 +867,8 @@
                 <h3>Tentang Kami</h3>
                 <p>Kami adalah komunitas yang berdedikasi untuk menyebarkan pengetahuan tentang astronomi dan keajaiban alam semesta.</p>
                 <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.instagram.com/andromedastore_.uad/"><i class="fas fa-shopping-bag"></i></a>
+                    <a href="https://www.instagram.com/andromeda_uad/"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
             <div class="footer-column">
@@ -1023,17 +877,14 @@
                     <li><a href="#home">Home</a></li>
                     <li><a href="#about">Tentang Andromeda</a></li>
                     <li><a href="#simulations">Simulasi 3D</a></li>
-                    <li><a href="#features">Fitur Menarik</a></li>
                     <li><a href="#gallery">Galeri</a></li>
-                    <li><a href="#facts">Fakta Menarik</a></li>
+                    <li><a href="#contact">Kontak</a></li>
                 </ul>
             </div>
             <div class="footer-column">
-                <h3>Kontak</h3>
+                <h3>Lokasi</h3>
                 <ul class="footer-links">
-                    <li><i class="fas fa-map-marker-alt"></i> Jakarta, Indonesia</li>
-                    <li><i class="fas fa-envelope"></i> info@andromeda.com</li>
-                    <li><i class="fas fa-phone"></i> +62 21 1234 5678</li>
+                    <li><i class="fas fa-map-marker-alt"></i> Yogyakarta, Indonesia</li>
                 </ul>
             </div>
         </div>
