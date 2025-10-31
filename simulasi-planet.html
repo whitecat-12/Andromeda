@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Planet - Keajaiban Antariksa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #0a0e29;
+            --secondary: #1a1f4b;
+            --accent: #4a5fc1;
+            --text: #e6e6ff;
+            --highlight: #6d83f2;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 14, 41, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.5s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            color: var(--highlight);
+            margin-right: 10px;
+        }
+
+        /* Menu Button */
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover {
+            background: rgba(106, 131, 242, 0.3);
+        }
+
+        /* Side Panel */
+        #side-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background: rgba(10, 14, 41, 0.98);
+            backdrop-filter: blur(15px);
+            z-index: 999;
+            transition: right 0.4s ease;
+            padding: 80px 25px 25px;
+            overflow-y: auto;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #side-panel.open {
+            right: 0;
+        }
+
+        .panel-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .panel-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--highlight);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .panel-section h2 i {
+            font-size: 1.1rem;
+        }
+
+        /* Planet Selector */
+        .planet-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .planet-option {
+            background: rgba(26, 31, 75, 0.7);
+            color: white;
+            border: 2px solid transparent;
+            padding: 12px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .planet-option:hover {
+            background: rgba(106, 131, 242, 0.3);
+            border-color: var(--highlight);
+        }
+
+        .planet-option.active {
+            background: rgba(106, 131, 242, 0.7);
+            border-color: var(--highlight);
+        }
+
+        /* Controls */
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .control-header label {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .control-value {
+            font-size: 12px;
+            color: var(--highlight);
+            background: rgba(106, 131, 242, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--highlight);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--highlight);
+        }
+
+        /* Info Section */
+        .info-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: #ff9900;
+        }
+
+        .info-content p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            opacity: 0.9;
+        }
+
+        .planet-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(26, 31, 75, 0.5);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--highlight);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            background: rgba(26, 31, 75, 0.7);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(106, 131, 242, 0.7);
+        }
+
+        /* Canvas Container */
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #ff9900;
+            z-index: 100;
+        }
+
+        /* Overlay */
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Planet Name Display */
+        .planet-name-display {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(10, 14, 41, 0.9);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            z-index: 10;
+            border: 2px solid rgba(106, 131, 242, 0.5);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--highlight);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #side-panel {
+                width: 100%;
+                right: -100%;
+            }
+            
+            .planet-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .planet-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .planet-name-display {
+                font-size: 18px;
+                padding: 12px 20px;
+                bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-globe"></i>
+            <span>Simulasi Planet</span>
+        </div>
+        <button class="menu-btn" id="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+
+    <!-- Overlay -->
+    <div id="overlay"></div>
+
+    <!-- Side Panel -->
+    <div id="side-panel">
+        <div class="panel-section">
+            <h2><i class="fas fa-globe"></i> Pilih Planet</h2>
+            <div class="planet-grid">
+                <button class="planet-option active" data-planet="sun">
+                    <i class="fas fa-sun"></i><br>Matahari
+                </button>
+                <button class="planet-option" data-planet="mercury">
+                    <i class="fas fa-circle"></i><br>Merkurius
+                </button>
+                <button class="planet-option" data-planet="venus">
+                    <i class="fas fa-circle"></i><br>Venus
+                </button>
+                <button class="planet-option" data-planet="earth">
+                    <i class="fas fa-globe-americas"></i><br>Bumi
+                </button>
+                <button class="planet-option" data-planet="mars">
+                    <i class="fas fa-circle"></i><br>Mars
+                </button>
+                <button class="planet-option" data-planet="jupiter">
+                    <i class="fas fa-circle"></i><br>Jupiter
+                </button>
+                <button class="planet-option" data-planet="saturn">
+                    <i class="fas fa-ring"></i><br>Saturnus
+                </button>
+                <button class="planet-option" data-planet="uranus">
+                    <i class="fas fa-circle"></i><br>Uranus
+                </button>
+                <button class="planet-option" data-planet="neptune">
+                    <i class="fas fa-circle"></i><br>Neptunus
+                </button>
+            </div>
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prev-planet">
+                    <i class="fas fa-chevron-left"></i> Planet Sebelumnya
+                </button>
+                <button class="nav-btn" id="next-planet">
+                    Planet Selanjutnya <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <h2><i class="fas fa-sliders-h"></i> Pengaturan Planet</h2>
+            <div class="control-group">
+                <div class="control-header">
+                    <label for="rotationSpeed">Kecepatan Rotasi</label>
+                    <span class="control-value" id="rotationSpeedValue">1.0</span>
+                </div>
+                <input type="range" id="rotationSpeed" min="0" max="3" step="0.1" value="1">
+            </div>
+            <div class="control-group">
+                <div class="control-header">
+                    <label for="planetScale">Skala Planet</label>
+                    <span class="control-value" id="planetScaleValue">1.0</span>
+                </div>
+                <input type="range" id="planetScale" min="0.5" max="2" step="0.1" value="1">
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="autoRotate" checked>
+                <label for="autoRotate">Rotasi Otomatis</label>
+            </div>
+        </div>
+
+        <div class="panel-section">
+            <h2></i> Informasi Planet</h2>
+            <div class="info-content">
+                <h3 id="planet-name">Matahari</h3>
+                <p id="planet-description">Bintang di pusat tata surya kita, sumber energi bagi kehidupan di Bumi. Terdiri dari 99.86% massa total tata surya.</p>
+                
+                <div class="planet-stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-diameter">1.392.700 km</div>
+                        <div class="stat-label">Diameter</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-mass">1.989 × 10³⁰ kg</div>
+                        <div class="stat-label">Massa</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-temp">5.500°C</div>
+                        <div class="stat-label">Suhu Permukaan</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="stat-period">25-35 hari</div>
+                        <div class="stat-label">Periode Rotasi</div>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 15px;"><strong>Tips:</strong> Gunakan mouse untuk menggerakkan kamera, scroll untuk zoom, dan geser di layar untuk navigasi.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Canvas Container -->
+    <div id="canvas-container"></div>
+    
+    <!-- Planet Name Display -->
+    <div class="planet-name-display" id="planet-name-display">Matahari</div>
+    
+    <div id="loading">Memuat Simulasi Planet...</div>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    
+    <script>
+        // Inisialisasi scene, camera, dan renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        
+        // Kontrol orbit
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 20;
+        controls.maxDistance = 500;
+        
+        // Posisi kamera awal
+        camera.position.set(0, 0, 100);
+        controls.target.set(0, 0, 0);
+        
+        // Sembunyikan loading screen setelah beberapa detik
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+        }, 2000);
+        
+        // Variabel untuk menyimpan objek planet
+        let currentPlanet = null;
+        let currentPlanetData = null;
+
+        // Data untuk planet-planet
+        const planetData = {
+            'sun': {
+                name: 'Matahari',
+                radius: 20,
+                textureUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/sun.jpg',
+                description: 'Bintang di pusat tata surya kita, sumber energi bagi kehidupan di Bumi. Terdiri dari 99.86% massa total tata surya.',
+                stats: {
+                    diameter: '1.392.700 km',
+                    mass: '1.989 × 10³⁰ kg',
+                    temp: '5.500°C',
+                    period: '25-35 hari'
+                }
+            },
+            'mercury': {
+                name: 'Merkurius',
+                radius: 5,
+                textureUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/mercury.jpg',
+                description: 'Planet terkecil dan terdekat dengan Matahari. Tidak memiliki satelit alami dan atmosfer yang signifikan.',
+                stats: {
+                    diameter: '4.879 km',
+                    mass: '3.301 × 10²³ kg',
+                    temp: '167°C',
+                    period: '59 hari'
+                }
+            },
+            'venus': {
+                name: 'Venus',
+                radius: 8,
+                textureUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/venus.jpg',
+                description: 'Planet terdekat kedua dari Matahari, sering disebut "bintang kejora". Memiliki atmosfer tebal beracun.',
+                stats: {
+                    diameter: '12.104 km',
+                    mass: '4.867 × 10²⁴ kg',
+                    temp: '462°C',
+                    period: '243 hari'
+                }
+            },
+            'earth': {
+                name: 'Bumi',
+                radius: 9,
+                textureUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg',
+                description: 'Planet ketiga dari Matahari, satu-satunya planet yang diketahui mendukung kehidupan. Memiliki satu satelit alami, Bulan.',
+                stats: {
+                    diameter: '12.742 km',
+                    mass: '5.972 × 10²⁴ kg',
+                    temp: '15°C',
+                    period: '1 hari'
+                }
+            },
+            'mars': {
+                name: 'Mars',
+                radius: 7,
+                textureUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/mars.jpg',
+                description: 'Planet keempat dari Matahari, sering disebut "planet merah" karena warna permukaannya yang kemerahan.',
+                stats: {
+                    diameter: '6.779 km',
+                    mass: '6.39 × 10²³ kg',
+                    temp: '-65°C',
+                    period: '1.03 hari'
+                }
+            },
+            'jupiter': {
+                name: 'Jupiter',
+                radius: 18,
+                textureUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/jupiter.jpg',
+                description: 'Planet terbesar dalam tata surya, planet gas raksasa dengan ciri khas Bintik Merah Besar.',
+                stats: {
+                    diameter: '139.820 km',
+                    mass: '1.898 × 10²⁷ kg',
+                    temp: '-110°C',
+                    period: '0.41 hari'
+                }
+            },
+            'saturn': {
+                name: 'Saturnus',
+                radius: 16,
+                textureUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/saturn.jpg',
+                description: 'Planet keenam dari Matahari, terkenal dengan sistem cincinnya yang menakjubkan.',
+                stats: {
+                    diameter: '116.460 km',
+                    mass: '5.683 × 10²⁶ kg',
+                    temp: '-140°C',
+                    period: '0.45 hari'
+                }
+            },
+            'uranus': {
+                name: 'Uranus',
+                radius: 12,
+                textureUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/uranus.jpg',
+                description: 'Planet ketujuh dari Matahari, planet es raksasa dengan sumbu rotasi yang sangat miring.',
+                stats: {
+                    diameter: '50.724 km',
+                    mass: '8.681 × 10²⁵ kg',
+                    temp: '-195°C',
+                    period: '0.72 hari'
+                }
+            },
+            'neptune': {
+                name: 'Neptunus',
+                radius: 11,
+                textureUrl: 'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/neptune.jpg',
+                description: 'Planet terjauh dari Matahari, planet es raksasa dengan angin terkuat dalam tata surya.',
+                stats: {
+                    diameter: '49.244 km',
+                    mass: '1.024 × 10²⁶ kg',
+                    temp: '-200°C',
+                    period: '0.67 hari'
+                }
+            }
+        };
+
+        // Panel control functions
+        function setupPanelControls() {
+            const menuToggle = document.getElementById('menu-toggle');
+            const sidePanel = document.getElementById('side-panel');
+            const overlay = document.getElementById('overlay');
+
+            // Toggle panel
+            menuToggle.addEventListener('click', () => {
+                sidePanel.classList.toggle('open');
+                overlay.classList.toggle('active');
+            });
+
+            // Close panel when clicking overlay
+            overlay.addEventListener('click', () => {
+                sidePanel.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+
+            // Update control values display
+            document.getElementById('rotationSpeed').addEventListener('input', function(e) {
+                document.getElementById('rotationSpeedValue').textContent = e.target.value;
+            });
+
+            document.getElementById('planetScale').addEventListener('input', function(e) {
+                document.getElementById('planetScaleValue').textContent = e.target.value;
+                if (currentPlanet) {
+                    const scale = parseFloat(e.target.value);
+                    currentPlanet.scale.setScalar(scale);
+                }
+            });
+
+            // Navigation buttons
+            document.getElementById('next-planet').addEventListener('click', nextPlanet);
+            document.getElementById('prev-planet').addEventListener('click', prevPlanet);
+
+            // Planet selection buttons
+            document.querySelectorAll('.planet-option').forEach(button => {
+                button.addEventListener('click', function() {
+                    const planetKey = this.getAttribute('data-planet');
+                    showPlanet(planetKey);
+                });
+            });
+        }
+
+        // Buat material planet dengan tekstur
+        function createPlanetMaterial(textureUrl, emissive = false) {
+            const textureLoader = new THREE.TextureLoader();
+            
+            // Fallback jika tekstur gagal dimuat
+            const fallbackColor = emissive ? 0xff9900 : 0x888888;
+            
+            try {
+                const texture = textureLoader.load(textureUrl, undefined, undefined, function(err) {
+                    console.warn('Gagal memuat tekstur:', textureUrl, err);
+                });
+                
+                if (emissive) {
+                    // Material untuk matahari dengan emisi
+                    return new THREE.MeshBasicMaterial({ 
+                        map: texture,
+                        emissive: 0xff6600,
+                        emissiveIntensity: 1.5
+                    });
+                } else {
+                    // Material untuk planet - gunakan BasicMaterial agar lebih terang
+                    return new THREE.MeshBasicMaterial({ 
+                        map: texture
+                    });
+                }
+            } catch (error) {
+                console.warn('Menggunakan material fallback untuk:', textureUrl);
+                return new THREE.MeshBasicMaterial({ 
+                    color: fallbackColor
+                });
+            }
+        }
+
+        // Tampilkan planet tertentu
+        function showPlanet(planetKey) {
+            // Hapus planet sebelumnya dari scene
+            if (currentPlanet) {
+                scene.remove(currentPlanet);
+            }
+            
+            // Dapatkan data planet
+            const data = planetData[planetKey];
+            currentPlanetData = data;
+            
+            // Buat planet baru
+            const planetGeometry = new THREE.SphereGeometry(data.radius, 64, 64);
+            const isSun = planetKey === 'sun';
+            const planetMaterial = createPlanetMaterial(data.textureUrl, isSun);
+            currentPlanet = new THREE.Mesh(planetGeometry, planetMaterial);
+            
+            // Tambahkan ke scene
+            scene.add(currentPlanet);
+            
+            // Reset kontrol kamera
+            controls.reset();
+            
+            // Atur posisi kamera berdasarkan ukuran planet
+            const cameraDistance = data.radius * 4;
+            camera.position.set(0, 0, cameraDistance);
+            controls.target.set(0, 0, 0);
+            
+            // Update informasi planet
+            updatePlanetInfo(data);
+            
+            // Update active button
+            document.querySelectorAll('.planet-option').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.planet-option[data-planet="${planetKey}"]`).classList.add('active');
+            
+            // Update nama planet di display
+            document.getElementById('planet-name-display').textContent = data.name;
+            
+            // Reset skala ke nilai default
+            document.getElementById('planetScale').value = 1;
+            document.getElementById('planetScaleValue').textContent = '1.0';
+            currentPlanet.scale.setScalar(1);
+            
+            // Tambahkan pencahayaan untuk matahari
+            if (isSun) {
+                const sunLight = new THREE.PointLight(0xff9900, 2, 1000);
+                currentPlanet.add(sunLight);
+                
+                // Tambahkan ambient light
+                const ambientLight = new THREE.AmbientLight(0x333333, 0.3);
+                scene.add(ambientLight);
+            } else {
+                // Hapus semua light sebelumnya dan tambahkan yang baru
+                scene.children.forEach(child => {
+                    if (child instanceof THREE.Light) {
+                        scene.remove(child);
+                    }
+                });
+                
+                // Tambahkan directional light untuk planet
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+                directionalLight.position.set(5, 3, 5);
+                scene.add(directionalLight);
+                
+                // Tambahkan ambient light
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                scene.add(ambientLight);
+            }
+        }
+
+        // Update informasi planet di panel
+        function updatePlanetInfo(data) {
+            document.getElementById('planet-name').textContent = data.name;
+            document.getElementById('planet-description').textContent = data.description;
+            document.getElementById('stat-diameter').textContent = data.stats.diameter;
+            document.getElementById('stat-mass').textContent = data.stats.mass;
+            document.getElementById('stat-temp').textContent = data.stats.temp;
+            document.getElementById('stat-period').textContent = data.stats.period;
+        }
+
+        // Fungsi navigasi planet
+        function nextPlanet() {
+            const buttons = document.querySelectorAll('.planet-option');
+            const current = document.querySelector('.planet-option.active');
+            let nextIndex = Array.from(buttons).indexOf(current) + 1;
+            if (nextIndex >= buttons.length) nextIndex = 0;
+            const planetKey = buttons[nextIndex].getAttribute('data-planet');
+            showPlanet(planetKey);
+        }
+
+        function prevPlanet() {
+            const buttons = document.querySelectorAll('.planet-option');
+            const current = document.querySelector('.planet-option.active');
+            let prevIndex = Array.from(buttons).indexOf(current) - 1;
+            if (prevIndex < 0) prevIndex = buttons.length - 1;
+            const planetKey = buttons[prevIndex].getAttribute('data-planet');
+            showPlanet(planetKey);
+        }
+
+        // Setup panel controls
+        setupPanelControls();
+        
+        // Tampilkan planet pertama (Matahari)
+        showPlanet('sun');
+        
+        // Variabel untuk animasi
+        let time = 0;
+        
+        // Fungsi animasi
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            time += 0.01;
+            
+            const rotationSpeed = parseFloat(document.getElementById('rotationSpeed').value);
+            
+            // Rotasi planet
+            if (currentPlanet && document.getElementById('autoRotate').checked) {
+                currentPlanet.rotation.y += 0.005 * rotationSpeed;
+            }
+            
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Handle resize window
+        window.addEventListener('resize', function() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Efek transparan header saat scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(10, 14, 41, 0.98)';
+                header.style.padding = '10px 5%';
+            } else {
+                header.style.background = 'rgba(10, 14, 41, 0.95)';
+                header.style.padding = '15px 5%';
+            }
+        });
+
+        // Swipe functionality untuk mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            
+            if (touchEndX < touchStartX - swipeThreshold) {
+                nextPlanet();
+            }
+            
+            if (touchEndX > touchStartX + swipeThreshold) {
+                prevPlanet();
+            }
+        }
+
+        // Navigasi planet dengan keyboard
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowLeft') {
+                prevPlanet();
+            } else if (e.key === 'ArrowRight') {
+                nextPlanet();
+            }
+        });
+    </script>
+</body>
+</html>
