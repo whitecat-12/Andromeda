@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Planet - Keajaiban Antariksa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #0a0e29;
+            --secondary: #1a1f4b;
+            --accent: #4a5fc1;
+            --text: #e6e6ff;
+            --highlight: #6d83f2;
+            --correct: #4CAF50;
+            --incorrect: #F44336;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 14, 41, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.5s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            color: var(--highlight);
+            margin-right: 10px;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 0 20px;
+        }
+
+        /* Quiz Header */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .quiz-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #e6e6ff, #a3b1ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .quiz-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 10px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--highlight);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Question Container */
+        .question-container {
+            background: rgba(26, 31, 75, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .question-number {
+            font-size: 1rem;
+            color: var(--highlight);
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Options */
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background: rgba(106, 131, 242, 0.2);
+            border-color: var(--highlight);
+            transform: translateY(-2px);
+        }
+
+        .option.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: var(--correct);
+        }
+
+        .option.incorrect {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: var(--incorrect);
+        }
+
+        .option-letter {
+            background: var(--secondary);
+            color: var(--text);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn:hover {
+            background: transparent;
+            color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(74, 95, 193, 0.3);
+        }
+
+        .nav-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Results Section */
+        .results-container {
+            background: rgba(26, 31, 75, 0.7);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+
+        .results-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--highlight);
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            background: linear-gradient(to right, #e6e6ff, #a3b1ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .score-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .restart-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .restart-btn:hover {
+            background: transparent;
+            color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(74, 95, 193, 0.3);
+        }
+
+        /* Feedback */
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid var(--correct);
+            color: #a5d6a7;
+        }
+
+        .feedback.incorrect {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid var(--incorrect);
+            color: #ef9a9a;
+        }
+
+        /* Footer */
+        footer {
+            background: #070a1f;
+            padding: 30px 5% 20px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: #a0a0c0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .quiz-title {
+                font-size: 2rem;
+            }
+            
+            .question-text {
+                font-size: 1.2rem;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .main-container {
+                margin: 80px auto 30px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--highlight);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-stars"></i>
+            <span>Kuis Planet</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <h1 class="quiz-title">Kuis Interaktif Planet Tata Surya</h1>
+            <p class="quiz-subtitle">Uji pengetahuan Anda tentang planet-planet dalam tata surya kita!</p>
+            
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
+        <!-- Question Container -->
+        <div class="question-container" id="question-container">
+            <div class="question-number" id="question-number">Pertanyaan 1 dari 10</div>
+            <h2 class="question-text" id="question-text">Planet manakah yang terdekat dengan Matahari?</h2>
+            
+            <!-- Options -->
+            <div class="options-container" id="options-container">
+                <div class="option" data-index="0">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Merkurius</div>
+                </div>
+                <div class="option" data-index="1">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Venus</div>
+                </div>
+                <div class="option" data-index="2">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Bumi</div>
+                </div>
+                <div class="option" data-index="3">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Mars</div>
+                </div>
+            </div>
+            
+            <!-- Feedback -->
+            <div class="feedback" id="feedback"></div>
+            
+            <!-- Navigation Buttons -->
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Sebelumnya
+                </button>
+                <button class="nav-btn" id="next-btn">
+                    Selanjutnya <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="nav-btn" id="submit-btn" style="display: none;">
+                    Lihat Hasil <i class="fas fa-chart-bar"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-container" id="results-container">
+            <h2 class="results-title">Hasil Kuis Anda</h2>
+            <div class="score-display" id="score-display">0/10</div>
+            <p class="score-message" id="score-message"></p>
+            <button class="restart-btn" id="restart-btn">
+                <i class="fas fa-redo"></i> Mulai Kuis Lagi
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="copyright">
+            <p>&copy; 2025 Kuis Planet. Semua Hak Dilindungi.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data kuis tentang planet
+        const quizData = [
+            {
+                question: "Planet manakah yang terdekat dengan Matahari?",
+                options: ["Merkurius", "Venus", "Bumi", "Mars"],
+                correct: 0,
+                explanation: "Merkurius adalah planet terdekat dengan Matahari dalam tata surya kita."
+            },
+            {
+                question: "Planet manakah yang dikenal sebagai 'Planet Merah'?",
+                options: ["Venus", "Mars", "Jupiter", "Saturnus"],
+                correct: 1,
+                explanation: "Mars disebut 'Planet Merah' karena permukaannya yang berwarna kemerahan akibat kandungan besi oksida."
+            },
+            {
+                question: "Planet terbesar dalam tata surya kita adalah?",
+                options: ["Bumi", "Saturnus", "Jupiter", "Neptunus"],
+                correct: 2,
+                explanation: "Jupiter adalah planet terbesar dalam tata surya dengan diameter sekitar 139.820 km."
+            },
+            {
+                question: "Planet manakah yang memiliki cincin yang paling terlihat?",
+                options: ["Jupiter", "Saturnus", "Uranus", "Neptunus"],
+                correct: 1,
+                explanation: "Saturnus memiliki sistem cincin yang paling mencolok dan mudah dilihat dari Bumi."
+            },
+            {
+                question: "Bulan adalah satelit alami dari planet?",
+                options: ["Mars", "Venus", "Bumi", "Merkurius"],
+                correct: 2,
+                explanation: "Bulan adalah satu-satunya satelit alami Bumi dan benda langit terdekat dengan kita."
+            },
+            {
+                question: "Planet manakah yang memiliki rotasi terbalik (berputar dari timur ke barat)?",
+                options: ["Mars", "Venus", "Uranus", "Neptunus"],
+                correct: 1,
+                explanation: "Venus memiliki rotasi retrograde, artinya berputar dari timur ke barat, berlawanan dengan kebanyakan planet."
+            },
+            {
+                question: "Planet kerdil yang sebelumnya dianggap sebagai planet kesembilan adalah?",
+                options: ["Ceres", "Eris", "Pluto", "Makemake"],
+                correct: 2,
+                explanation: "Pluto sebelumnya diklasifikasikan sebagai planet kesembilan sebelum direklasifikasi sebagai planet kerdil pada tahun 2006."
+            },
+            {
+                question: "Planet manakah yang memiliki suhu permukaan terpanas?",
+                options: ["Merkurius", "Venus", "Mars", "Jupiter"],
+                correct: 1,
+                explanation: "Meskipun Merkurius lebih dekat ke Matahari, Venus memiliki suhu permukaan terpanas karena efek rumah kaca yang ekstrem."
+            },
+            {
+                question: "Asteroid terbesar di sabuk asteroid antara Mars dan Jupiter adalah?",
+                options: ["Vesta", "Ceres", "Pallas", "Hygiea"],
+                correct: 1,
+                explanation: "Ceres adalah objek terbesar di sabuk asteroid dan diklasifikasikan sebagai planet kerdil."
+            },
+            {
+                question: "Planet manakah yang memiliki hari terpendek (rotasi tercepat)?",
+                options: ["Merkurius", "Bumi", "Jupiter", "Neptunus"],
+                correct: 2,
+                explanation: "Jupiter memiliki hari terpendek, berputar sekali setiap 9 jam 56 menit."
+            },
+            {
+                question: "Planet manakah yang memiliki atmosfer paling tebal?",
+                options: ["Bumi", "Venus", "Mars", "Jupiter"],
+                correct: 1,
+                explanation: "Venus memiliki atmosfer paling tebal di antara semua planet, dengan tekanan permukaan 92 kali lebih besar dari Bumi."
+            },
+            {
+                question: "Planet manakah yang memiliki jumlah bulan terbanyak?",
+                options: ["Saturnus", "Jupiter", "Uranus", "Neptunus"],
+                correct: 0,
+                explanation: "Saturnus memiliki setidaknya 146 bulan yang telah dikonfirmasi, lebih banyak dari planet lainnya."
+            },
+            {
+                question: "Planet manakah yang memiliki kemiringan sumbu paling ekstrem?",
+                options: ["Uranus", "Neptunus", "Saturnus", "Mars"],
+                correct: 0,
+                explanation: "Uranus memiliki kemiringan sumbu 98 derajat, sehingga seolah-olah berputar 'terlentang'."
+            },
+            {
+                question: "Planet manakah yang memiliki badai raksasa yang dikenal sebagai 'Bintik Merah Besar'?",
+                options: ["Jupiter", "Saturnus", "Neptunus", "Uranus"],
+                correct: 0,
+                explanation: "Jupiter memiliki Bintik Merah Besar, badai antisiklon yang telah berlangsung setidaknya 400 tahun."
+            },
+            {
+                question: "Planet manakah yang tidak memiliki satelit alami?",
+                options: ["Merkurius dan Venus", "Mars dan Venus", "Merkurius dan Mars", "Venus dan Neptunus"],
+                correct: 0,
+                explanation: "Merkurius dan Venus adalah satu-satunya planet di tata surya yang tidak memiliki bulan atau satelit alami."
+            }
+        ];
+
+        // Fungsi untuk mengacak array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Acak pertanyaan dan ambil 10 pertama
+        const shuffledQuizData = shuffleArray([...quizData]).slice(0, 10);
+
+        // Variabel state kuis
+        let currentQuestion = 0;
+        let userAnswers = Array(shuffledQuizData.length).fill(null);
+        let score = 0;
+
+        // Elemen DOM
+        const questionNumberEl = document.getElementById('question-number');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const feedbackEl = document.getElementById('feedback');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionContainer = document.getElementById('question-container');
+        const resultsContainer = document.getElementById('results-container');
+        const scoreDisplay = document.getElementById('score-display');
+        const scoreMessage = document.getElementById('score-message');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Inisialisasi kuis
+        function initQuiz() {
+            currentQuestion = 0;
+            userAnswers = Array(shuffledQuizData.length).fill(null);
+            score = 0;
+            updateQuestion();
+            updateProgressBar();
+            questionContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+        }
+
+        // Update pertanyaan
+        function updateQuestion() {
+            const question = shuffledQuizData[currentQuestion];
+            
+            // Update nomor pertanyaan
+            questionNumberEl.textContent = `Pertanyaan ${currentQuestion + 1} dari ${shuffledQuizData.length}`;
+            
+            // Update teks pertanyaan
+            questionTextEl.textContent = question.question;
+            
+            // Update opsi
+            optionsContainerEl.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.dataset.index = index;
+                
+                // Tandai jika sudah dijawab
+                if (userAnswers[currentQuestion] === index) {
+                    if (index === question.correct) {
+                        optionEl.classList.add('correct');
+                    } else {
+                        optionEl.classList.add('incorrect');
+                    }
+                }
+                
+                optionEl.innerHTML = `
+                    <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                
+                optionEl.addEventListener('click', () => selectOption(index));
+                optionsContainerEl.appendChild(optionEl);
+            });
+            
+            // Update tombol navigasi
+            prevBtn.disabled = currentQuestion === 0;
+            
+            if (currentQuestion === shuffledQuizData.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'flex';
+            } else {
+                nextBtn.style.display = 'flex';
+                submitBtn.style.display = 'none';
+            }
+            
+            // Sembunyikan feedback
+            feedbackEl.style.display = 'none';
+        }
+
+        // Pilih opsi
+        function selectOption(selectedIndex) {
+            // Simpan jawaban pengguna
+            userAnswers[currentQuestion] = selectedIndex;
+            
+            const question = shuffledQuizData[currentQuestion];
+            const isCorrect = selectedIndex === question.correct;
+            
+            // Tampilkan feedback
+            feedbackEl.textContent = isCorrect 
+                ? `Benar! ${question.explanation}` 
+                : `Salah. Jawaban yang benar adalah: ${question.options[question.correct]}. ${question.explanation}`;
+            
+            feedbackEl.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackEl.style.display = 'block';
+            
+            // Update tampilan opsi
+            const options = optionsContainerEl.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                if (index === question.correct) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+                
+                // Nonaktifkan klik setelah memilih jawaban
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Hitung skor sementara
+            calculateScore();
+        }
+
+        // Hitung skor
+        function calculateScore() {
+            score = 0;
+            userAnswers.forEach((answer, index) => {
+                if (answer !== null && answer === shuffledQuizData[index].correct) {
+                    score++;
+                }
+            });
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / shuffledQuizData.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Tampilkan hasil
+        function showResults() {
+            calculateScore();
+            
+            // Update tampilan hasil
+            scoreDisplay.textContent = `${score}/${shuffledQuizData.length}`;
+            
+            // Tentukan pesan berdasarkan skor
+            let message = '';
+            if (score === shuffledQuizData.length) {
+                message = 'Luar biasa! Anda benar-benar ahli planet tata surya!';
+            } else if (score >= shuffledQuizData.length * 0.7) {
+                message = 'Bagus! Pengetahuan Anda tentang planet cukup baik.';
+            } else if (score >= shuffledQuizData.length * 0.5) {
+                message = 'Cukup baik, tetapi masih ada ruang untuk meningkatkan pengetahuan Anda.';
+            } else {
+                message = 'Anda mungkin perlu mempelajari lebih lanjut tentang planet tata surya.';
+            }
+            
+            scoreMessage.textContent = message;
+            
+            // Tampilkan hasil, sembunyikan pertanyaan
+            questionContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+        }
+
+        // Event listeners
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                updateQuestion();
+                updateProgressBar();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion < shuffledQuizData.length - 1) {
+                currentQuestion++;
+                updateQuestion();
+                updateProgressBar();
+            }
+        });
+
+        submitBtn.addEventListener('click', showResults);
+
+        restartBtn.addEventListener('click', () => {
+            // Acak ulang pertanyaan
+            const newShuffledQuizData = shuffleArray([...quizData]).slice(0, 10);
+            shuffledQuizData.length = 0;
+            shuffledQuizData.push(...newShuffledQuizData);
+            initQuiz();
+        });
+
+        // Inisialisasi kuis saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
