@@ -466,6 +466,34 @@
             box-shadow: 0 5px 15px rgba(74, 95, 193, 0.3);
         }
 
+        /* Tombol Soal */
+        .soal-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #ff6b6b;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #ff6b6b;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .soal-btn:hover {
+            background: transparent;
+            color: #ff6b6b;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .simulation-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
         /* Gallery Section */
         .gallery-grid {
             display: grid;
@@ -791,7 +819,10 @@
                 </div>
                 <div class="simulation-content">
                     <p>Jelajahi planet-planet dalam tata surya kita dengan simulasi 3D interaktif. Pelajari karakteristik unik setiap planet, dari Merkurius yang panas hingga Neptunus yang dingin.</p>
-                    <a href="simulasi-planet.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                    <div class="simulation-actions">
+                        <a href="simulasi-planet.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                        <a href="#" class="soal-btn">Soal <i class="fas fa-question-circle"></i></a>
+                    </div>
                 </div>
             </div>
             <div class="simulation-card fade-in">
@@ -803,7 +834,10 @@
                 </div>
                 <div class="simulation-content">
                     <p>Pelajari siklus hidup bintang dari kelahiran hingga kematiannya. Simulasi ini menunjukkan bagaimana bintang berevolusi berdasarkan massanya.</p>
-                    <a href="simulasi-bintang.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                    <div class="simulation-actions">
+                        <a href="simulasi-bintang.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                        <a href="#" class="soal-btn">Soal <i class="fas fa-question-circle"></i></a>
+                    </div>
                 </div>
             </div>
             <div class="simulation-card fade-in">
@@ -815,7 +849,10 @@
                 </div>
                 <div class="simulation-content">
                     <p>Temukan Rasi Ursa Major dan asterisme Biduk yang ikonik! Pelajari bagaimana bintang-bintang penunjuknya, Merak dan Dubhe.</p>
-                    <a href="simulasi-rasibintang.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                    <div class="simulation-actions">
+                        <a href="simulasi-rasibintang.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                        <a href="#" class="soal-btn">Soal <i class="fas fa-question-circle"></i></a>
+                    </div>
                 </div>
             </div>
             <div class="simulation-card fade-in">
@@ -827,7 +864,10 @@
                 </div>
                 <div class="simulation-content">
                     <p>Simulasi lengkap tata surya kita dengan semua planet, bulan, dan objek sabuk Kuiper. Lihat orbit planet dan interaksi gravitasinya.</p>
-                    <a href="simulasi-tata-surya.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                    <div class="simulation-actions">
+                        <a href="simulasi-tata-surya.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                        <a href="#" class="soal-btn">Soal <i class="fas fa-question-circle"></i></a>
+                    </div>
                 </div>
             </div>
         </div>
