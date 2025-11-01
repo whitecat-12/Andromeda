@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Jenis Bintang - Keajaiban Antariksa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #0a0e29;
+            --secondary: #1a1f4b;
+            --accent: #4a5fc1;
+            --text: #e6e6ff;
+            --highlight: #6d83f2;
+            --correct: #4CAF50;
+            --incorrect: #F44336;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 14, 41, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.5s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            color: var(--highlight);
+            margin-right: 10px;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 100px auto 50px;
+            padding: 0 20px;
+        }
+
+        /* Quiz Header */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .quiz-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #e6e6ff, #a3b1ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .quiz-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 20px;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 10px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--highlight);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Question Container */
+        .question-container {
+            background: rgba(26, 31, 75, 0.7);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .question-number {
+            font-size: 1rem;
+            color: var(--highlight);
+            margin-bottom: 10px;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        /* Options */
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background: rgba(106, 131, 242, 0.2);
+            border-color: var(--highlight);
+            transform: translateY(-2px);
+        }
+
+        .option.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: var(--correct);
+        }
+
+        .option.incorrect {
+            background: rgba(244, 67, 54, 0.2);
+            border-color: var(--incorrect);
+        }
+
+        .option-letter {
+            background: var(--secondary);
+            color: var(--text);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .option-text {
+            flex: 1;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .nav-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn:hover {
+            background: transparent;
+            color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(74, 95, 193, 0.3);
+        }
+
+        .nav-btn:disabled {
+            background: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Results Section */
+        .results-container {
+            background: rgba(26, 31, 75, 0.7);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+
+        .results-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--highlight);
+        }
+
+        .score-display {
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 20px 0;
+            background: linear-gradient(to right, #e6e6ff, #a3b1ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .score-message {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .restart-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .restart-btn:hover {
+            background: transparent;
+            color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(74, 95, 193, 0.3);
+        }
+
+        /* Feedback */
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid var(--correct);
+            color: #a5d6a7;
+        }
+
+        .feedback.incorrect {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid var(--incorrect);
+            color: #ef9a9a;
+        }
+
+        /* Footer */
+        footer {
+            background: #070a1f;
+            padding: 30px 5% 20px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .copyright {
+            font-size: 0.9rem;
+            color: #a0a0c0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .quiz-title {
+                font-size: 2rem;
+            }
+            
+            .question-text {
+                font-size: 1.2rem;
+            }
+            
+            .nav-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .main-container {
+                margin: 80px auto 30px;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--highlight);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-stars"></i>
+            <span>Kuis Jenis Bintang</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Quiz Header -->
+        <div class="quiz-header">
+            <h1 class="quiz-title">Kuis Interaktif Jenis-Jenis Bintang</h1>
+            <p class="quiz-subtitle">Uji pengetahuan Anda tentang bintang biru, bintang merah, bintang neutron, dan matahari!</p>
+            
+            <!-- Progress Bar -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
+        <!-- Question Container -->
+        <div class="question-container" id="question-container">
+            <div class="question-number" id="question-number">Pertanyaan 1 dari 10</div>
+            <h2 class="question-text" id="question-text">Jenis bintang manakah yang memiliki suhu permukaan tertinggi?</h2>
+            
+            <!-- Options -->
+            <div class="options-container" id="options-container">
+                <div class="option" data-index="0">
+                    <div class="option-letter">A</div>
+                    <div class="option-text">Bintang Biru</div>
+                </div>
+                <div class="option" data-index="1">
+                    <div class="option-letter">B</div>
+                    <div class="option-text">Bintang Merah</div>
+                </div>
+                <div class="option" data-index="2">
+                    <div class="option-letter">C</div>
+                    <div class="option-text">Bintang Neutron</div>
+                </div>
+                <div class="option" data-index="3">
+                    <div class="option-letter">D</div>
+                    <div class="option-text">Matahari</div>
+                </div>
+            </div>
+            
+            <!-- Feedback -->
+            <div class="feedback" id="feedback"></div>
+            
+            <!-- Navigation Buttons -->
+            <div class="nav-buttons">
+                <button class="nav-btn" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Sebelumnya
+                </button>
+                <button class="nav-btn" id="next-btn">
+                    Selanjutnya <i class="fas fa-arrow-right"></i>
+                </button>
+                <button class="nav-btn" id="submit-btn" style="display: none;">
+                    Lihat Hasil <i class="fas fa-chart-bar"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-container" id="results-container">
+            <h2 class="results-title">Hasil Kuis Anda</h2>
+            <div class="score-display" id="score-display">0/10</div>
+            <p class="score-message" id="score-message"></p>
+            <button class="restart-btn" id="restart-btn">
+                <i class="fas fa-redo"></i> Mulai Kuis Lagi
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="copyright">
+            <p>&copy; 2025 Kuis Jenis Bintang. Semua Hak Dilindungi.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Data kuis tentang jenis-jenis bintang
+        const quizData = [
+            {
+                question: "Jenis bintang manakah yang memiliki suhu permukaan tertinggi?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 0,
+                explanation: "Bintang biru memiliki suhu permukaan tertinggi, mencapai 30.000-50.000 K, karena massanya yang besar dan reaksi fusi nuklir yang sangat intens."
+            },
+            {
+                question: "Bintang manakah yang merupakan bintang katai kuning?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 3,
+                explanation: "Matahari diklasifikasikan sebagai bintang katai kuning (G2V) dengan suhu permukaan sekitar 5.800 K."
+            },
+            {
+                question: "Jenis bintang manakah yang terbentuk dari sisa-sisa ledakan supernova?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 2,
+                explanation: "Bintang neutron terbentuk ketika inti bintang masif mengalami keruntuhan gravitasi selama ledakan supernova."
+            },
+            {
+                question: "Bintang manakah yang memiliki ukuran paling kecil namun massa sangat padat?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 2,
+                explanation: "Bintang neutron memiliki diameter hanya sekitar 20 km tetapi massanya 1,4-3 kali massa matahari, membuatnya sangat padat."
+            },
+            {
+                question: "Jenis bintang manakah yang berada pada fase akhir evolusi bintang bermassa rendah?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 1,
+                explanation: "Bintang merah raksasa adalah fase akhir evolusi bintang bermassa rendah seperti matahari, dimana bintang mengembang dan mendingin."
+            },
+            {
+                question: "Bintang manakah yang memiliki luminositas (daya cahaya) paling tinggi?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 0,
+                explanation: "Bintang biru super raksasa memiliki luminositas hingga 1 juta kali lebih terang dari matahari karena ukuran dan suhunya yang ekstrem."
+            },
+            {
+                question: "Jenis bintang manakah yang akan menjadi matahari dalam beberapa miliar tahun?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 1,
+                explanation: "Matahari akan berevolusi menjadi bintang merah raksasa dalam sekitar 5 miliar tahun, mengembang hingga menelan orbit Bumi."
+            },
+            {
+                question: "Bintang manakah yang memiliki medan magnet paling kuat?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 2,
+                explanation: "Bintang neutron memiliki medan magnet triliunan kali lebih kuat dari matahari, menghasilkan pulsar dan magnetar."
+            },
+            {
+                question: "Jenis bintang manakah yang memiliki umur paling pendek?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 0,
+                explanation: "Bintang biru memiliki umur hanya beberapa juta tahun karena membakar bahan bakar nuklirnya dengan sangat cepat."
+            },
+            {
+                question: "Bintang manakah yang merupakan sumber energi utama bagi kehidupan di Bumi?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 3,
+                explanation: "Matahari adalah sumber energi utama bagi Bumi, menyediakan cahaya dan panas yang diperlukan untuk kehidupan."
+            },
+            {
+                question: "Jenis bintang manakah yang dapat berdenyut dan dikenal sebagai variabel Cepheid?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 1,
+                explanation: "Bintang variabel Cepheid umumnya adalah bintang kuning hingga merah yang berdenyut dan digunakan sebagai 'lilin standar' dalam astronomi."
+            },
+            {
+                question: "Bintang manakah yang memiliki kecepatan rotasi paling tinggi?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 2,
+                explanation: "Bintang neutron dapat berputar ratusan kali per detik karena kekekalan momentum sudut dari bintang induknya yang mengerut."
+            },
+            {
+                question: "Jenis bintang manakah yang paling umum di alam semesta?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 1,
+                explanation: "Bintang katai merah adalah jenis bintang paling umum, mencakup sekitar 75% dari semua bintang di galaksi Bima Sakti."
+            },
+            {
+                question: "Bintang manakah yang menghasilkan elemen berat melalui proses nukleosintesis?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 0,
+                explanation: "Bintang biru masif menghasilkan elemen berat seperti karbon, oksigen, dan besi melalui fusi nuklir di intinya."
+            },
+            {
+                question: "Jenis bintang manakah yang dapat meledak sebagai supernova Tipe II?",
+                options: ["Bintang Biru", "Bintang Merah", "Bintang Neutron", "Matahari"],
+                correct: 0,
+                explanation: "Bintang biru super raksasa dengan massa lebih dari 8 kali massa matahari dapat mengakhiri hidupnya sebagai supernova Tipe II."
+            }
+        ];
+
+        // Fungsi untuk mengacak array
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Acak pertanyaan dan ambil 10 pertama
+        const shuffledQuizData = shuffleArray([...quizData]).slice(0, 10);
+
+        // Variabel state kuis
+        let currentQuestion = 0;
+        let userAnswers = Array(shuffledQuizData.length).fill(null);
+        let score = 0;
+
+        // Elemen DOM
+        const questionNumberEl = document.getElementById('question-number');
+        const questionTextEl = document.getElementById('question-text');
+        const optionsContainerEl = document.getElementById('options-container');
+        const feedbackEl = document.getElementById('feedback');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const questionContainer = document.getElementById('question-container');
+        const resultsContainer = document.getElementById('results-container');
+        const scoreDisplay = document.getElementById('score-display');
+        const scoreMessage = document.getElementById('score-message');
+        const restartBtn = document.getElementById('restart-btn');
+
+        // Inisialisasi kuis
+        function initQuiz() {
+            currentQuestion = 0;
+            userAnswers = Array(shuffledQuizData.length).fill(null);
+            score = 0;
+            updateQuestion();
+            updateProgressBar();
+            questionContainer.style.display = 'block';
+            resultsContainer.style.display = 'none';
+        }
+
+        // Update pertanyaan
+        function updateQuestion() {
+            const question = shuffledQuizData[currentQuestion];
+            
+            // Update nomor pertanyaan
+            questionNumberEl.textContent = `Pertanyaan ${currentQuestion + 1} dari ${shuffledQuizData.length}`;
+            
+            // Update teks pertanyaan
+            questionTextEl.textContent = question.question;
+            
+            // Acak urutan opsi jawaban
+            const shuffledOptions = shuffleArray([...question.options]);
+            const correctAnswerIndex = shuffledOptions.indexOf(question.options[question.correct]);
+            
+            // Update opsi
+            optionsContainerEl.innerHTML = '';
+            shuffledOptions.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.dataset.index = index;
+                optionEl.dataset.originalIndex = question.options.indexOf(option);
+                
+                // Tandai jika sudah dijawab
+                if (userAnswers[currentQuestion] !== null) {
+                    const userAnswerIndex = question.options.indexOf(shuffledOptions[userAnswers[currentQuestion]]);
+                    if (userAnswerIndex === question.correct) {
+                        if (index === userAnswers[currentQuestion]) {
+                            optionEl.classList.add('correct');
+                        }
+                    } else {
+                        if (index === userAnswers[currentQuestion]) {
+                            optionEl.classList.add('incorrect');
+                        }
+                        if (index === correctAnswerIndex) {
+                            optionEl.classList.add('correct');
+                        }
+                    }
+                }
+                
+                optionEl.innerHTML = `
+                    <div class="option-letter">${String.fromCharCode(65 + index)}</div>
+                    <div class="option-text">${option}</div>
+                `;
+                
+                optionEl.addEventListener('click', () => selectOption(index, correctAnswerIndex));
+                optionsContainerEl.appendChild(optionEl);
+            });
+            
+            // Update tombol navigasi
+            prevBtn.disabled = currentQuestion === 0;
+            
+            if (currentQuestion === shuffledQuizData.length - 1) {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'flex';
+            } else {
+                nextBtn.style.display = 'flex';
+                submitBtn.style.display = 'none';
+            }
+            
+            // Sembunyikan feedback
+            feedbackEl.style.display = 'none';
+        }
+
+        // Pilih opsi
+        function selectOption(selectedIndex, correctAnswerIndex) {
+            // Simpan jawaban pengguna
+            userAnswers[currentQuestion] = selectedIndex;
+            
+            const question = shuffledQuizData[currentQuestion];
+            const isCorrect = selectedIndex === correctAnswerIndex;
+            
+            // Tampilkan feedback
+            feedbackEl.textContent = isCorrect 
+                ? `Benar! ${question.explanation}` 
+                : `Salah. Jawaban yang benar adalah: ${question.options[question.correct]}. ${question.explanation}`;
+            
+            feedbackEl.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedbackEl.style.display = 'block';
+            
+            // Update tampilan opsi
+            const options = optionsContainerEl.querySelectorAll('.option');
+            options.forEach((option, index) => {
+                if (index === correctAnswerIndex) {
+                    option.classList.add('correct');
+                } else if (index === selectedIndex && !isCorrect) {
+                    option.classList.add('incorrect');
+                }
+                
+                // Nonaktifkan klik setelah memilih jawaban
+                option.style.pointerEvents = 'none';
+            });
+            
+            // Hitung skor sementara
+            calculateScore();
+        }
+
+        // Hitung skor
+        function calculateScore() {
+            score = 0;
+            userAnswers.forEach((answer, index) => {
+                if (answer !== null) {
+                    const question = shuffledQuizData[index];
+                    const shuffledOptions = shuffleArray([...question.options]); // Acak ulang untuk mendapatkan urutan yang sama
+                    const correctAnswerIndex = shuffledOptions.indexOf(question.options[question.correct]);
+                    if (answer === correctAnswerIndex) {
+                        score++;
+                    }
+                }
+            });
+        }
+
+        // Update progress bar
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / shuffledQuizData.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Tampilkan hasil
+        function showResults() {
+            calculateScore();
+            
+            // Update tampilan hasil
+            scoreDisplay.textContent = `${score}/${shuffledQuizData.length}`;
+            
+            // Tentukan pesan berdasarkan skor
+            let message = '';
+            if (score === shuffledQuizData.length) {
+                message = 'Luar biasa! Anda benar-benar ahli tentang jenis-jenis bintang!';
+            } else if (score >= shuffledQuizData.length * 0.7) {
+                message = 'Bagus! Pengetahuan Anda tentang jenis bintang cukup baik.';
+            } else if (score >= shuffledQuizData.length * 0.5) {
+                message = 'Cukup baik, tetapi masih ada ruang untuk meningkatkan pengetahuan Anda.';
+            } else {
+                message = 'Anda mungkin perlu mempelajari lebih lanjut tentang jenis-jenis bintang.';
+            }
+            
+            scoreMessage.textContent = message;
+            
+            // Tampilkan hasil, sembunyikan pertanyaan
+            questionContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+        }
+
+        // Event listeners
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                updateQuestion();
+                updateProgressBar();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion < shuffledQuizData.length - 1) {
+                currentQuestion++;
+                updateQuestion();
+                updateProgressBar();
+            }
+        });
+
+        submitBtn.addEventListener('click', showResults);
+
+        restartBtn.addEventListener('click', () => {
+            // Acak ulang pertanyaan
+            const newShuffledQuizData = shuffleArray([...quizData]).slice(0, 10);
+            shuffledQuizData.length = 0;
+            shuffledQuizData.push(...newShuffledQuizData);
+            initQuiz();
+        });
+
+        // Inisialisasi kuis saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
