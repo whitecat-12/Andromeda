@@ -922,14 +922,25 @@
                 // Untuk Saturnus, gunakan model GLB jika tersedia
                 if (planetKey === 'saturn' && data.glbUrl) {
                     loadGLBModel(data.glbUrl, function(model) {
-                        // Skala model agar sesuai dengan ukuran planet
-                        const scale = data.radius / 5; // Sesuaikan skala berdasarkan radius planet
+                        // Skala model agar sesuai dengan ukuran planet - PERBAIKAN SKALA DI SINI
+                        // Hitung bounding box untuk mendapatkan ukuran asli model
+                        const box = new THREE.Box3().setFromObject(model);
+                        const size = box.getSize(new THREE.Vector3());
+                        const maxSize = Math.max(size.x, size.y, size.z);
+                        
+                        // Skala model agar sesuai dengan radius yang ditentukan
+                        const targetSize = data.radius * 2; // Diameter = radius * 2
+                        const scale = targetSize / maxSize * 0.5; // Faktor tambahan untuk menyesuaikan
+                        
                         model.scale.set(scale, scale, scale);
                         
                         // Posisi awal planet
                         const angle = Math.random() * Math.PI * 2;
                         model.position.x = Math.cos(angle) * data.distance;
                         model.position.z = Math.sin(angle) * data.distance;
+                        
+                        // Simpan informasi planet key di userData untuk referensi
+                        model.userData.planetKey = planetKey;
                         
                         scene.add(model);
                         solarSystem.planets[planetKey] = {
@@ -951,6 +962,9 @@
                     const angle = Math.random() * Math.PI * 2;
                     planet.position.x = Math.cos(angle) * data.distance;
                     planet.position.z = Math.sin(angle) * data.distance;
+                    
+                    // Simpan informasi planet key di userData untuk referensi
+                    planet.userData.planetKey = planetKey;
                     
                     scene.add(planet);
                     solarSystem.planets[planetKey] = {
@@ -1169,7 +1183,8 @@
             // Jika kamera sedang mengikuti planet, update posisi kamera
             if (isFollowingPlanet && cameraTarget) {
                 const planetPosition = cameraTarget.position.clone();
-                const cameraDistance = planetData[cameraTarget.userData?.planetKey]?.radius * 8 || 40;
+                const planetKey = cameraTarget.userData?.planetKey;
+                const cameraDistance = planetData[planetKey]?.radius * 8 || 40;
                 
                 // Hitung posisi kamera yang mengikuti planet
                 camera.position.copy(planetPosition);
