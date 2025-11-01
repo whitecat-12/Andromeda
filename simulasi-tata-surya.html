@@ -472,20 +472,6 @@
                 </div>
                 <input type="range" id="orbitSpeed" min="0" max="3" step="0.1" value="1">
             </div>
-            <div class="control-group">
-                <div class="control-header">
-                    <label for="planetScale">Skala Planet</label>
-                    <span class="control-value" id="planetScaleValue">1.0</span>
-                </div>
-                <input type="range" id="planetScale" min="0.5" max="2" step="0.1" value="1">
-            </div>
-            <div class="control-group">
-                <div class="control-header">
-                    <label for="distanceScale">Skala Jarak</label>
-                    <span class="control-value" id="distanceScaleValue">1.0</span>
-                </div>
-                <input type="range" id="distanceScale" min="0.1" max="2" step="0.1" value="1">
-            </div>
             <div class="checkbox-group">
                 <input type="checkbox" id="showOrbits" checked>
                 <label for="showOrbits">Tampilkan Orbit</label>
@@ -752,14 +738,6 @@
 
             document.getElementById('orbitSpeed').addEventListener('input', function(e) {
                 document.getElementById('orbitSpeedValue').textContent = e.target.value;
-            });
-
-            document.getElementById('planetScale').addEventListener('input', function(e) {
-                document.getElementById('planetScaleValue').textContent = e.target.value;
-            });
-
-            document.getElementById('distanceScale').addEventListener('input', function(e) {
-                document.getElementById('distanceScaleValue').textContent = e.target.value;
             });
 
             // Navigation buttons
@@ -1082,38 +1060,6 @@
             // Akan digunakan dalam animasi
         });
         
-        document.getElementById('planetScale').addEventListener('input', function(e) {
-            const scale = parseFloat(e.target.value);
-            Object.keys(solarSystem.planets).forEach(planetKey => {
-                const planet = solarSystem.planets[planetKey];
-                if (planet) {
-                    planet.mesh.scale.setScalar(scale);
-                }
-            });
-        });
-        
-        document.getElementById('distanceScale').addEventListener('input', function(e) {
-            const scale = parseFloat(e.target.value);
-            Object.keys(solarSystem.planets).forEach(planetKey => {
-                const planet = solarSystem.planets[planetKey];
-                if (planet) {
-                    const originalDistance = planet.data.distance;
-                    const angle = planet.angle;
-                    planet.mesh.position.x = Math.cos(angle) * originalDistance * scale;
-                    planet.mesh.position.z = Math.sin(angle) * originalDistance * scale;
-                    
-                    // Update orbit
-                    const orbit = solarSystem.orbits[planetKey];
-                    if (orbit) {
-                        scene.remove(orbit);
-                        const newOrbit = createOrbit(originalDistance * scale);
-                        scene.add(newOrbit);
-                        solarSystem.orbits[planetKey] = newOrbit;
-                    }
-                }
-            });
-        });
-        
         // Event listener untuk pemilih planet
         document.querySelectorAll('.planet-option').forEach(button => {
             button.addEventListener('click', function() {
@@ -1169,7 +1115,7 @@
                     planet.angle += (data.speed / 100) * orbitSpeed;
                     
                     // Posisi planet
-                    const distance = data.distance * parseFloat(document.getElementById('distanceScale').value);
+                    const distance = data.distance;
                     planet.mesh.position.x = Math.cos(planet.angle) * distance;
                     planet.mesh.position.z = Math.sin(planet.angle) * distance;
                     
