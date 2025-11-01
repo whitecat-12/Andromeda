@@ -366,7 +366,7 @@
     <!-- Header -->
     <header>
         <div class="logo">
-            <i class="fas fa-globe"></i>
+            </i>
             <span>Simulasi Planet</span>
         </div>
         <button class="menu-btn" id="menu-toggle">
@@ -480,7 +480,6 @@
     <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     
     <script>
         // Inisialisasi scene, camera, dan renderer
@@ -512,12 +511,12 @@
         let currentPlanet = null;
         let currentPlanetData = null;
 
-        // Data untuk planet-planet
+        // Data untuk planet-planet dengan path ke file JPG lokal
         const planetData = {
             'mercury': {
                 name: 'Merkurius',
                 radius: 5,
-                textureUrl: 'textures/mercury.jpg',
+                textureUrl: 'textures/mercury.jpg', // Ganti dengan path ke file JPG Anda
                 description: 'Planet terkecil dan terdekat dengan Matahari. Tidak memiliki satelit alami dan atmosfer yang signifikan.',
                 stats: {
                     diameter: '4.879 km',
@@ -529,7 +528,7 @@
             'venus': {
                 name: 'Venus',
                 radius: 8,
-                textureUrl: 'textures/venus.jpg',
+                textureUrl: 'textures/venus.jpg', // Ganti dengan path ke file JPG Anda
                 description: 'Planet terdekat kedua dari Matahari, sering disebut "bintang kejora". Memiliki atmosfer tebal beracun.',
                 stats: {
                     diameter: '12.104 km',
@@ -541,7 +540,7 @@
             'earth': {
                 name: 'Bumi',
                 radius: 9,
-                textureUrl: 'textures/earth.jpg',
+                textureUrl: 'textures/earth.jpg', // Ganti dengan path ke file JPG Anda
                 description: 'Planet ketiga dari Matahari, satu-satunya planet yang diketahui mendukung kehidupan. Memiliki satu satelit alami, Bulan.',
                 stats: {
                     diameter: '12.742 km',
@@ -553,7 +552,7 @@
             'mars': {
                 name: 'Mars',
                 radius: 7,
-                textureUrl: 'textures/mars.jpg',
+                textureUrl: 'textures/mars.jpg', // Ganti dengan path ke file JPG Anda
                 description: 'Planet keempat dari Matahari, sering disebut "planet merah" karena warna permukaannya yang kemerahan.',
                 stats: {
                     diameter: '6.779 km',
@@ -565,7 +564,7 @@
             'jupiter': {
                 name: 'Jupiter',
                 radius: 18,
-                textureUrl: 'textures/jupiter.jpg',
+                textureUrl: 'textures/jupiter.jpg', // Ganti dengan path ke file JPG Anda
                 description: 'Planet terbesar dalam tata surya, planet gas raksasa dengan ciri khas Bintik Merah Besar.',
                 stats: {
                     diameter: '139.820 km',
@@ -577,8 +576,7 @@
             'saturn': {
                 name: 'Saturnus',
                 radius: 16,
-                textureUrl: 'textures/saturn.jpg',
-                glbUrl: 'models/saturn.glb', // Path ke file GLB Saturnus
+                textureUrl: 'textures/saturn.jpg', // Ganti dengan path ke file JPG Anda
                 description: 'Planet keenam dari Matahari, terkenal dengan sistem cincinnya yang menakjubkan.',
                 stats: {
                     diameter: '116.460 km',
@@ -590,7 +588,7 @@
             'uranus': {
                 name: 'Uranus',
                 radius: 12,
-                textureUrl: 'textures/uranus.jpg',
+                textureUrl: 'textures/uranus.jpg', // Ganti dengan path ke file JPG Anda
                 description: 'Planet ketujuh dari Matahari, planet es raksasa dengan sumbu rotasi yang sangat miring.',
                 stats: {
                     diameter: '50.724 km',
@@ -602,7 +600,7 @@
             'neptune': {
                 name: 'Neptunus',
                 radius: 11,
-                textureUrl: 'textures/neptune.jpg',
+                textureUrl: 'textures/neptune.jpg', // Ganti dengan path ke file JPG Anda
                 description: 'Planet terjauh dari Matahari, planet es raksasa dengan angin terkuat dalam tata surya.',
                 stats: {
                     diameter: '49.244 km',
@@ -669,6 +667,7 @@
                     textureUrl,
                     // onLoad callback
                     function(texture) {
+                        // Material untuk planet - gunakan BasicMaterial agar lebih terang
                         resolve(new THREE.MeshBasicMaterial({ 
                             map: texture
                         }));
@@ -682,27 +681,6 @@
                         resolve(new THREE.MeshBasicMaterial({ 
                             color: fallbackColor
                         }));
-                    }
-                );
-            });
-        }
-
-        // Load model GLB untuk Saturnus
-        function loadGLBModel(url) {
-            return new Promise((resolve, reject) => {
-                const loader = new THREE.GLTFLoader();
-                loader.load(
-                    url,
-                    // onLoad callback
-                    function(gltf) {
-                        resolve(gltf.scene);
-                    },
-                    // onProgress callback (optional)
-                    undefined,
-                    // onError callback
-                    function(error) {
-                        console.error('Gagal memuat model GLB:', error);
-                        reject(error);
                     }
                 );
             });
@@ -722,33 +700,12 @@
             const data = planetData[planetKey];
             currentPlanetData = data;
             
+            // Buat planet baru dengan tekstur
+            const planetGeometry = new THREE.SphereGeometry(data.radius, 64, 64);
+            
             try {
-                // Khusus untuk Saturnus, gunakan model GLB
-                if (planetKey === 'saturn' && data.glbUrl) {
-                    currentPlanet = await loadGLBModel(data.glbUrl);
-                    
-                    // Hitung bounding box untuk mendapatkan ukuran asli model
-                    const box = new THREE.Box3().setFromObject(currentPlanet);
-                    const size = box.getSize(new THREE.Vector3());
-                    const maxSize = Math.max(size.x, size.y, size.z);
-                    
-                    // PERBAIKAN SKALA: Gunakan faktor yang lebih kecil
-                    // Radius Saturnus adalah 16, jadi diameter = 32
-                    const targetSize = 32; // Diameter target
-                    const scale = (targetSize / maxSize) * 0.3; // Faktor 0.3 untuk membuat lebih kecil
-                    
-                    console.log(`Saturnus - Max Size: ${maxSize}, Target: ${targetSize}, Scale: ${scale}`);
-                    
-                    currentPlanet.scale.set(scale, scale, scale);
-                    
-                    // Atur rotasi awal agar cincin terlihat bagus
-                    currentPlanet.rotation.x = Math.PI / 6; // Miringkan 30 derajat
-                } else {
-                    // Untuk planet lain, gunakan sphere dengan tekstur
-                    const planetGeometry = new THREE.SphereGeometry(data.radius, 64, 64);
-                    const planetMaterial = await createPlanetMaterial(data.textureUrl);
-                    currentPlanet = new THREE.Mesh(planetGeometry, planetMaterial);
-                }
+                const planetMaterial = await createPlanetMaterial(data.textureUrl);
+                currentPlanet = new THREE.Mesh(planetGeometry, planetMaterial);
                 
                 // Tambahkan ke scene
                 scene.add(currentPlanet);
@@ -776,9 +733,7 @@
                 // Reset skala ke nilai default
                 document.getElementById('planetScale').value = 1;
                 document.getElementById('planetScaleValue').textContent = '1.0';
-                if (currentPlanet) {
-                    currentPlanet.scale.setScalar(1);
-                }
+                currentPlanet.scale.setScalar(1);
                 
                 // Hapus semua light sebelumnya dan tambahkan yang baru
                 scene.children.forEach(child => {
@@ -798,13 +753,6 @@
                 
             } catch (error) {
                 console.error('Error creating planet:', error);
-                // Fallback ke sphere biasa jika GLB gagal
-                if (planetKey === 'saturn') {
-                    const planetGeometry = new THREE.SphereGeometry(data.radius, 64, 64);
-                    const planetMaterial = await createPlanetMaterial(data.textureUrl);
-                    currentPlanet = new THREE.Mesh(planetGeometry, planetMaterial);
-                    scene.add(currentPlanet);
-                }
             } finally {
                 // Sembunyikan loading
                 document.getElementById('loading').style.display = 'none';
