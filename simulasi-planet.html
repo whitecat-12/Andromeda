@@ -578,7 +578,7 @@
                 name: 'Saturnus',
                 radius: 16,
                 textureUrl: 'textures/saturn.jpg',
-                glbUrl: 'models/saturn.glb', // TAMBAHKAN INI - path ke file GLB Saturnus
+                glbUrl: 'models/saturn.glb', // Path ke file GLB Saturnus
                 description: 'Planet keenam dari Matahari, terkenal dengan sistem cincinnya yang menakjubkan.',
                 stats: {
                     diameter: '116.460 km',
@@ -732,11 +732,17 @@
                     const size = box.getSize(new THREE.Vector3());
                     const maxSize = Math.max(size.x, size.y, size.z);
                     
-                    // Skala model agar sesuai dengan radius yang ditentukan
-                    const targetSize = data.radius * 2; // Diameter = radius * 2
-                    const scale = targetSize / maxSize;
+                    // PERBAIKAN SKALA: Gunakan faktor yang lebih kecil
+                    // Radius Saturnus adalah 16, jadi diameter = 32
+                    const targetSize = 32; // Diameter target
+                    const scale = (targetSize / maxSize) * 0.3; // Faktor 0.3 untuk membuat lebih kecil
+                    
+                    console.log(`Saturnus - Max Size: ${maxSize}, Target: ${targetSize}, Scale: ${scale}`);
                     
                     currentPlanet.scale.set(scale, scale, scale);
+                    
+                    // Atur rotasi awal agar cincin terlihat bagus
+                    currentPlanet.rotation.x = Math.PI / 6; // Miringkan 30 derajat
                 } else {
                     // Untuk planet lain, gunakan sphere dengan tekstur
                     const planetGeometry = new THREE.SphereGeometry(data.radius, 64, 64);
@@ -770,7 +776,9 @@
                 // Reset skala ke nilai default
                 document.getElementById('planetScale').value = 1;
                 document.getElementById('planetScaleValue').textContent = '1.0';
-                currentPlanet.scale.setScalar(1);
+                if (currentPlanet) {
+                    currentPlanet.scale.setScalar(1);
+                }
                 
                 // Hapus semua light sebelumnya dan tambahkan yang baru
                 scene.children.forEach(child => {
