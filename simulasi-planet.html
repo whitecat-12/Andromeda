@@ -366,7 +366,7 @@
     <!-- Header -->
     <header>
         <div class="logo">
-            </i>
+            <i class="fas fa-globe"></i>
             <span>Simulasi Planet</span>
         </div>
         <button class="menu-btn" id="menu-toggle">
@@ -433,9 +433,20 @@
                 </div>
                 <input type="range" id="planetScale" min="0.5" max="2" step="0.1" value="1">
             </div>
+            <div class="control-group">
+                <div class="control-header">
+                    <label for="moonScale">Skala Bulan</label>
+                    <span class="control-value" id="moonScaleValue">1.0</span>
+                </div>
+                <input type="range" id="moonScale" min="0.5" max="2" step="0.1" value="1">
+            </div>
             <div class="checkbox-group">
                 <input type="checkbox" id="autoRotate" checked>
                 <label for="autoRotate">Rotasi Otomatis</label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="showMoon" checked>
+                <label for="showMoon">Tampilkan Bulan</label>
             </div>
         </div>
 
@@ -509,6 +520,7 @@
         
         // Variabel untuk menyimpan objek planet
         let currentPlanet = null;
+        let currentMoon = null;
         let currentPlanetData = null;
 
         // Data untuk planet-planet dengan path ke file JPG lokal
@@ -642,6 +654,20 @@
                 }
             });
 
+            document.getElementById('moonScale').addEventListener('input', function(e) {
+                document.getElementById('moonScaleValue').textContent = e.target.value;
+                if (currentMoon) {
+                    const scale = parseFloat(e.target.value);
+                    currentMoon.scale.setScalar(scale);
+                }
+            });
+
+            document.getElementById('showMoon').addEventListener('change', function(e) {
+                if (currentMoon) {
+                    currentMoon.visible = e.target.checked;
+                }
+            });
+
             // Navigation buttons
             document.getElementById('next-planet').addEventListener('click', nextPlanet);
             document.getElementById('prev-planet').addEventListener('click', prevPlanet);
@@ -686,6 +712,15 @@
             });
         }
 
+        // Buat material bulan
+        function createMoonMaterial() {
+            return new THREE.MeshBasicMaterial({ 
+                color: 0xaaaaaa,
+                transparent: true,
+                opacity: 0.9
+            });
+        }
+
         // Tampilkan planet tertentu
         async function showPlanet(planetKey) {
             // Tampilkan loading
@@ -694,6 +729,9 @@
             // Hapus planet sebelumnya dari scene
             if (currentPlanet) {
                 scene.remove(currentPlanet);
+            }
+            if (currentMoon) {
+                scene.remove(currentMoon);
             }
             
             // Dapatkan data planet
@@ -709,6 +747,24 @@
                 
                 // Tambahkan ke scene
                 scene.add(currentPlanet);
+                
+                // Buat bulan untuk Bumi
+                if (planetKey === 'earth') {
+                    const moonGeometry = new THREE.SphereGeometry(data.radius * 0.27, 32, 32);
+                    const moonMaterial = createMoonMaterial();
+                    currentMoon = new THREE.Mesh(moonGeometry, moonMaterial);
+                    
+                    // Atur posisi bulan relatif terhadap Bumi
+                    currentMoon.position.set(data.radius * 2.5, 0, 0);
+                    
+                    // Tambahkan ke scene
+                    scene.add(currentMoon);
+                    
+                    // Reset skala bulan ke nilai default
+                    document.getElementById('moonScale').value = 1;
+                    document.getElementById('moonScaleValue').textContent = '1.0';
+                    currentMoon.scale.setScalar(1);
+                }
                 
                 // Reset kontrol kamera
                 controls.reset();
@@ -730,7 +786,7 @@
                 // Update nama planet di display
                 document.getElementById('planet-name-display').textContent = data.name;
                 
-                // Reset skala ke nilai default
+                // Reset skala planet ke nilai default
                 document.getElementById('planetScale').value = 1;
                 document.getElementById('planetScaleValue').textContent = '1.0';
                 currentPlanet.scale.setScalar(1);
@@ -808,6 +864,16 @@
             // Rotasi planet
             if (currentPlanet && document.getElementById('autoRotate').checked) {
                 currentPlanet.rotation.y += 0.005 * rotationSpeed;
+            }
+            
+            // Rotasi bulan (hanya untuk Bumi)
+            if (currentMoon && document.getElementById('autoRotate').checked) {
+                // Bulan berputar mengelilingi Bumi
+                currentMoon.position.x = currentPlanet.position.x + Math.cos(time) * currentPlanetData.radius * 2.5;
+                currentMoon.position.z = currentPlanet.position.z + Math.sin(time) * currentPlanetData.radius * 2.5;
+                
+                // Bulan juga berotasi pada porosnya
+                currentMoon.rotation.y += 0.01 * rotationSpeed;
             }
             
             controls.update();
