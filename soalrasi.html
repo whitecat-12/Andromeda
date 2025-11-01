@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galaksi Andromeda - Keajaiban Antariksa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #0a0e29;
+            --secondary: #1a1f4b;
+            --accent: #4a5fc1;
+            --text: #e6e6ff;
+            --highlight: #6d83f2;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 14, 41, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.5s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+        }
+
+        .logo i {
+            color: var(--highlight);
+            margin-right: 10px;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 25px;
+            position: relative;
+        }
+
+        nav ul li a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+            padding: 8px 0;
+        }
+
+        nav ul li a i {
+            margin-right: 8px;
+            font-size: 1rem;
+        }
+
+        nav ul li a:hover {
+            color: var(--highlight);
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--highlight);
+            transition: width 0.3s ease;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(26, 31, 75, 0.95);
+            min-width: 220px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dropdown-content a {
+            color: var(--text);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background: rgba(74, 95, 193, 0.2);
+            color: var(--highlight);
+            padding-left: 20px;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Navbar Actions */
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            margin-left: 30px;
+        }
+
+        .search-box {
+            position: relative;
+            margin-right: 20px;
+        }
+
+        .search-box input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 8px 15px 8px 40px;
+            color: var(--text);
+            font-size: 0.9rem;
+            width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--highlight);
+            width: 250px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .login-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--highlight);
+        }
+
+        .signup-btn {
+            background: var(--accent);
+            color: white;
+            border: 1px solid var(--accent);
+        }
+
+        .signup-btn:hover {
+            background: transparent;
+            color: var(--accent);
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(10, 14, 41, 0.7), rgba(10, 14, 41, 0.9)), 
+                        url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2110&q=80');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 20px;
+            transform: translateY(50px);
+            opacity: 0;
+            animation: fadeUp 1s ease forwards 0.5s;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #e6e6ff, #a3b1ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--accent);
+            color: white;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid var(--accent);
+        }
+
+        .btn:hover {
+            background: transparent;
+            color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(74, 95, 193, 0.3);
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            display: inline-block;
+            position: relative;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--highlight);
+        }
+
+        /* About Section */
+        .about-content {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .about-text {
+            flex: 1;
+        }
+
+        .about-text h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: var(--highlight);
+        }
+
+        .about-text p {
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .about-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            transform: perspective(1000px) rotateY(-5deg);
+            transition: transform 0.5s ease;
+        }
+
+        .about-image:hover {
+            transform: perspective(1000px) rotateY(0);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Simulation Section */
+        .simulation {
+            background: var(--secondary);
+        }
+
+        .simulation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .simulation-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .simulation-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: var(--highlight);
+        }
+
+        .simulation-image {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .simulation-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .simulation-card:hover .simulation-image img {
+            transform: scale(1.1);
+        }
+
+        .simulation-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, rgba(10, 14, 41, 0.8));
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+        }
+
+        .simulation-overlay h3 {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .simulation-content {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .simulation-content p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .simulation-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--accent);
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid var(--accent);
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .simulation-btn:hover {
+            background: transparent;
+            color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(74, 95, 193, 0.3);
+        }
+
+        /* Tombol Soal */
+        .soal-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #ff6b6b;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid #ff6b6b;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .soal-btn:hover {
+            background: transparent;
+            color: #ff6b6b;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .simulation-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Gallery Section */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 250px;
+            cursor: pointer;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(transparent, rgba(10, 14, 41, 0.9));
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+
+        /* Footer */
+        footer {
+            background: #070a1f;
+            padding: 50px 5% 20px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--highlight);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--highlight);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--secondary);
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background: var(--highlight);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #a0a0c0;
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .search-box input {
+                width: 150px;
+            }
+            
+            .search-box input:focus {
+                width: 180px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .about-content {
+                flex-direction: column;
+            }
+            
+            .about-image {
+                width: 100%;
+            }
+            
+            .nav-actions {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background: rgba(10, 14, 41, 0.95);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            }
+            
+            nav ul.active {
+                display: flex;
+            }
+            
+            nav ul li {
+                margin: 10px 0;
+            }
+            
+            .dropdown-content {
+                position: static;
+                display: none;
+                width: 100%;
+                box-shadow: none;
+                background: rgba(26, 31, 75, 0.8);
+                margin-top: 10px;
+            }
+            
+            .dropdown:hover .dropdown-content {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            section {
+                padding: 80px 5%;
+            }
+            
+            .search-box {
+                display: none;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--highlight);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <i class="fas fa-stars"></i>
+            <span>Andromeda</span>
+        </div>
+        
+        <div class="nav-container">
+            <nav>
+                <ul id="nav-menu">
+                    <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="#about"><i class="fas fa-info-circle"></i> Tentang</a></li>
+                    <li class="dropdown">
+                        <a href="#simulations"><i class="fas fa-cube"></i> Simulasi 3D</a>
+                        <div class="dropdown-content">
+                            <a href="simulasi-planet.html" class="simulation-link"><i class="fas fa-globe"></i> Simulasi Planet</a>
+                            <a href="simulasi-bintang.html" class="simulation-link"><i class="fas fa-star"></i> Simulasi Bintang</a>
+                            <a href="simulasi-galaksi.html" class="simulation-link"><i class="fas fa-galactic-republic"></i> Simulasi Galaksi</a>
+                            <a href="simulasi-tata-surya.html" class="simulation-link"><i class="fas fa-solar-panel"></i> Simulasi Tata Surya</a>
+                        </div>
+                    </li>
+                    <li><a href="#gallery"><i class="fas fa-images"></i> Galeri</a></li>
+                    <li><a href="#contact"><i class="fas fa-envelope"></i> Kontak</a></li>
+                </ul>
+            </nav>
+            
+            <div class="nav-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Cari...">
+                </div>
+                <div class="auth-buttons">
+                    <a href="#" class="auth-btn login-btn">Login</a>
+                    <a href="#" class="auth-btn signup-btn">Daftar</a>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-btn" id="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1>Andromeda UAD</h1>
+            <p>Selamat Datang, Penjelajah Bintang! Bersama Andromeda UAD, wujudkan rasa ingin tahumu pada semesta. Mari kita amati, pelajari, dan kagumi keajaiban langit malam.</p>
+            <a href="#about" class="btn">Jelajahi Sekarang <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="section-title">
+            <h2>Tentang Andromeda</h2>
+        </div>
+        <div class="about-content">
+            <div class="about-text">
+                <h3>Andromeda UAD</h3>
+                <p>Andromeda UAD merupakan singkatan dari Kelompok Studi (LSO) Antariksa dan Astronomi di Universitas Ahmad Dahlan (UAD). Sebagai salah satu kegiatan kemahasiswaan yang berada di bawah naungan Pusat Studi Astronomi UAD, kami didedikasikan untuk mengeksplorasi dan mengungkap misteri alam semesta.</p>
+                <p>Kegiatan utama kami berpusat pada pengamatan astronomi dan ilmu falak. Mulai dari melacak fase bulan, mengamati bintang matahari, hingga mengidentifikasi galaksi dan rasi bintang, kami aktif melakukan praktik langsung untuk memperdalam pemahaman tentang benda-benda langit.</p>
+                <p>Untuk terus terhubung dengan komunitas dan pemburu langit lainnya, kami memiliki akun media sosial Instagram resmi yang aktif membagikan informasi, jadwal fenomena astronomi, serta dokumentasi kegiatan kami.".</p>
+                <a href="https://www.instagram.com/andromeda_uad/" class="btn">Ikuti Kami</a>
+            </div>
+            <div class="about-image">
+            <img src="images/andromeda-uad.jpg" alt="Anggota Andromeda UAD">
+        </div>
+        </div>
+    </section>
+
+    <!-- Simulation Section -->
+    <section class="simulation" id="simulations">
+        <div class="section-title">
+            <h2>Simulasi 3D Antariksa</h2>
+        </div>
+        <div class="simulation-grid">
+            <div class="simulation-card fade-in">
+                <div class="simulation-image">
+                    <img src="https://images.unsplash.com/photo-1614314107768-6018061b5b72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Simulasi Planet">
+                    <div class="simulation-overlay">
+                        <h3>Simulasi Planet 3D</h3>
+                    </div>
+                </div>
+                <div class="simulation-content">
+                    <p>Jelajahi planet-planet dalam tata surya kita dengan simulasi 3D interaktif. Pelajari karakteristik unik setiap planet, dari Merkurius yang panas hingga Neptunus yang dingin.</p>
+                    <div class="simulation-actions">
+                        <a href="simulasi-planet.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                        <a href="#" class="soal-btn">Soal <i class="fas fa-question-circle"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="simulation-card fade-in">
+                <div class="simulation-image">
+                    <img src="https://images.unsplash.com/photo-1464802686167-b939a6910659?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2050&q=80" alt="Simulasi Bintang">
+                    <div class="simulation-overlay">
+                        <h3>Simulasi Bintang 3D</h3>
+                    </div>
+                </div>
+                <div class="simulation-content">
+                    <p>Pelajari siklus hidup bintang dari kelahiran hingga kematiannya. Simulasi ini menunjukkan bagaimana bintang berevolusi berdasarkan massanya.</p>
+                    <div class="simulation-actions">
+                        <a href="simulasi-bintang.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                        <a href="#" class="soal-btn">Soal <i class="fas fa-question-circle"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="simulation-card fade-in">
+                <div class="simulation-image">
+                    <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2110&q=80" alt="Simulasi Galaksi">
+                    <div class="simulation-overlay">
+                        <h3>Rasi Bintang 3D</h3>
+                    </div>
+                </div>
+                <div class="simulation-content">
+                    <p>Temukan Rasi Ursa Major dan asterisme Biduk yang ikonik! Pelajari bagaimana bintang-bintang penunjuknya, Merak dan Dubhe.</p>
+                    <div class="simulation-actions">
+                        <a href="simulasi-rasibintang.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                        <a href="#" class="soal-btn">Soal <i class="fas fa-question-circle"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="simulation-card fade-in">
+                <div class="simulation-image">
+                    <img src="https://images.unsplash.com/photo-1446776877081-d282a0f896e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80" alt="Simulasi Tata Surya">
+                    <div class="simulation-overlay">
+                        <h3>Simulasi Tata Surya 3D</h3>
+                    </div>
+                </div>
+                <div class="simulation-content">
+                    <p>Simulasi lengkap tata surya kita dengan semua planet, bulan, dan objek sabuk Kuiper. Lihat orbit planet dan interaksi gravitasinya.</p>
+                    <div class="simulation-actions">
+                        <a href="simulasi-tata-surya.html" class="simulation-btn">Jalankan Simulasi <i class="fas fa-play"></i></a>
+                        <a href="#" class="soal-btn">Soal <i class="fas fa-question-circle"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery" id="gallery">
+        <div class="section-title">
+            <h2>Galeri Andromeda</h2>
+        </div>
+        <div class="gallery-grid">
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1465101162946-4377e57745c3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2078&q=80" alt="Andromeda Galaxy">
+                <div class="gallery-overlay">
+                    <h3>Pusat Galaksi</h3>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1502134249126-9f3755a50d78?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="Andromeda Spiral Arms">
+                <div class="gallery-overlay">
+                    <h3>Lengan Spiral</h3>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2110&q=80" alt="Andromeda from Hubble">
+                <div class="gallery-overlay">
+                    <h3>Foto Teleskop Hubble</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-column">
+                <h3>Tentang Kami</h3>
+                <p>Kami adalah komunitas yang berdedikasi untuk menyebarkan pengetahuan tentang astronomi dan keajaiban alam semesta.</p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/andromedastore_.uad/"><i class="fas fa-shopping-bag"></i></a>
+                    <a href="https://www.instagram.com/andromeda_uad/"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h3>Link Cepat</h3>
+                <ul class="footer-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">Tentang Andromeda</a></li>
+                    <li><a href="#simulations">Simulasi 3D</a></li>
+                    <li><a href="#gallery">Galeri</a></li>
+                    <li><a href="#contact">Kontak</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Lokasi</h3>
+                <ul class="footer-links">
+                    <li><i class="fas fa-map-marker-alt"></i> Yogyakarta, Indonesia</li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Andromeda Space. Semua Hak Dilindungi.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu functionality
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const navMenu = document.getElementById('nav-menu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileMenuBtn.innerHTML = navMenu.classList.contains('active') 
+                ? '<i class="fas fa-times"></i>' 
+                : '<i class="fas fa-bars"></i>';
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // Animasi scroll untuk elemen dengan class fade-in
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const fadeInOnScroll = () => {
+            fadeElements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const elementVisible = 150;
+                
+                if (elementTop < window.innerHeight - elementVisible) {
+                    element.classList.add('visible');
+                }
+            });
+        };
+        
+        window.addEventListener('scroll', fadeInOnScroll);
+        window.addEventListener('load', fadeInOnScroll);
+        
+        // Smooth scroll untuk navigasi
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Efek transparan header saat scroll
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(10, 14, 41, 0.98)';
+                header.style.padding = '10px 5%';
+            } else {
+                header.style.background = 'rgba(10, 14, 41, 0.95)';
+                header.style.padding = '15px 5%';
+            }
+        });
+    </script>
+</body>
+</html>
