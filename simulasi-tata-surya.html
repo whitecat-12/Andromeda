@@ -557,6 +557,7 @@
     <!-- Three.js Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     
     <script>
         // Inisialisasi scene, camera, dan renderer
@@ -685,6 +686,7 @@
                 name: 'Saturnus',
                 radius: 10,
                 textureUrl: 'textures/saturn.jpg', // Ganti dengan path ke file JPG Anda
+                glbUrl: 'models/saturn.glb', // Ganti dengan path ke file GLB Anda
                 distance: 350,
                 speed: 1.0,
                 description: 'Planet keenam dari Matahari, terkenal dengan sistem cincinnya yang menakjubkan.',
@@ -867,6 +869,21 @@
             };
         }
 
+        // Load model GLB untuk Saturnus
+        function loadGLBModel(url, callback) {
+            const loader = new THREE.GLTFLoader();
+            loader.load(url, function(gltf) {
+                callback(gltf.scene);
+            }, undefined, function(error) {
+                console.error('Gagal memuat model GLB:', error);
+                // Fallback ke sphere jika model GLB gagal dimuat
+                const fallbackGeometry = new THREE.SphereGeometry(planetData.saturn.radius, 32, 32);
+                const fallbackMaterial = createPlanetMaterial(planetData.saturn.textureUrl);
+                const fallbackMesh = new THREE.Mesh(fallbackGeometry, fallbackMaterial);
+                callback(fallbackMesh);
+            });
+        }
+
         // Buat tata surya
         function createSolarSystem() {
             // Buat matahari dengan tekstur
@@ -902,25 +919,49 @@
                 scene.add(orbit);
                 solarSystem.orbits[planetKey] = orbit;
                 
-                // Buat planet dengan tekstur
-                const planetGeometry = new THREE.SphereGeometry(data.radius, 32, 32);
-                const planetMaterial = createPlanetMaterial(data.textureUrl);
-                const planet = new THREE.Mesh(planetGeometry, planetMaterial);
-                
-                // Posisi awal planet
-                const angle = Math.random() * Math.PI * 2;
-                planet.position.x = Math.cos(angle) * data.distance;
-                planet.position.z = Math.sin(angle) * data.distance;
-                
-                scene.add(planet);
-                solarSystem.planets[planetKey] = {
-                    mesh: planet,
-                    data: data,
-                    angle: angle
-                };
-                
-                // Buat label untuk planet
-                solarSystem.labels[planetKey] = createPlanetLabel(data.name, solarSystem.planets[planetKey]);
+                // Untuk Saturnus, gunakan model GLB jika tersedia
+                if (planetKey === 'saturn' && data.glbUrl) {
+                    loadGLBModel(data.glbUrl, function(model) {
+                        // Skala model agar sesuai dengan ukuran planet
+                        const scale = data.radius / 5; // Sesuaikan skala berdasarkan radius planet
+                        model.scale.set(scale, scale, scale);
+                        
+                        // Posisi awal planet
+                        const angle = Math.random() * Math.PI * 2;
+                        model.position.x = Math.cos(angle) * data.distance;
+                        model.position.z = Math.sin(angle) * data.distance;
+                        
+                        scene.add(model);
+                        solarSystem.planets[planetKey] = {
+                            mesh: model,
+                            data: data,
+                            angle: angle
+                        };
+                        
+                        // Buat label untuk planet
+                        solarSystem.labels[planetKey] = createPlanetLabel(data.name, solarSystem.planets[planetKey]);
+                    });
+                } else {
+                    // Untuk planet lain, gunakan sphere biasa
+                    const planetGeometry = new THREE.SphereGeometry(data.radius, 32, 32);
+                    const planetMaterial = createPlanetMaterial(data.textureUrl);
+                    const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+                    
+                    // Posisi awal planet
+                    const angle = Math.random() * Math.PI * 2;
+                    planet.position.x = Math.cos(angle) * data.distance;
+                    planet.position.z = Math.sin(angle) * data.distance;
+                    
+                    scene.add(planet);
+                    solarSystem.planets[planetKey] = {
+                        mesh: planet,
+                        data: data,
+                        angle: angle
+                    };
+                    
+                    // Buat label untuk planet
+                    solarSystem.labels[planetKey] = createPlanetLabel(data.name, solarSystem.planets[planetKey]);
+                }
             });
         }
 
@@ -1031,7 +1072,9 @@
             const scale = parseFloat(e.target.value);
             Object.keys(solarSystem.planets).forEach(planetKey => {
                 const planet = solarSystem.planets[planetKey];
-                planet.mesh.scale.setScalar(scale);
+                if (planet) {
+                    planet.mesh.scale.setScalar(scale);
+                }
             });
         });
         
@@ -1039,18 +1082,20 @@
             const scale = parseFloat(e.target.value);
             Object.keys(solarSystem.planets).forEach(planetKey => {
                 const planet = solarSystem.planets[planetKey];
-                const originalDistance = planet.data.distance;
-                const angle = planet.angle;
-                planet.mesh.position.x = Math.cos(angle) * originalDistance * scale;
-                planet.mesh.position.z = Math.sin(angle) * originalDistance * scale;
-                
-                // Update orbit
-                const orbit = solarSystem.orbits[planetKey];
-                if (orbit) {
-                    scene.remove(orbit);
-                    const newOrbit = createOrbit(originalDistance * scale);
-                    scene.add(newOrbit);
-                    solarSystem.orbits[planetKey] = newOrbit;
+                if (planet) {
+                    const originalDistance = planet.data.distance;
+                    const angle = planet.angle;
+                    planet.mesh.position.x = Math.cos(angle) * originalDistance * scale;
+                    planet.mesh.position.z = Math.sin(angle) * originalDistance * scale;
+                    
+                    // Update orbit
+                    const orbit = solarSystem.orbits[planetKey];
+                    if (orbit) {
+                        scene.remove(orbit);
+                        const newOrbit = createOrbit(originalDistance * scale);
+                        scene.add(newOrbit);
+                        solarSystem.orbits[planetKey] = newOrbit;
+                    }
                 }
             });
         });
@@ -1103,26 +1148,28 @@
             // Gerakan planet
             Object.keys(solarSystem.planets).forEach(planetKey => {
                 const planet = solarSystem.planets[planetKey];
-                const data = planet.data;
-                
-                // Update orbit
-                planet.angle += (data.speed / 100) * orbitSpeed;
-                
-                // Posisi planet
-                const distance = data.distance * parseFloat(document.getElementById('distanceScale').value);
-                planet.mesh.position.x = Math.cos(planet.angle) * distance;
-                planet.mesh.position.z = Math.sin(planet.angle) * distance;
-                
-                // Rotasi planet
-                if (document.getElementById('autoRotate').checked) {
-                    planet.mesh.rotation.y += 0.01 * rotationSpeed;
+                if (planet) {
+                    const data = planet.data;
+                    
+                    // Update orbit
+                    planet.angle += (data.speed / 100) * orbitSpeed;
+                    
+                    // Posisi planet
+                    const distance = data.distance * parseFloat(document.getElementById('distanceScale').value);
+                    planet.mesh.position.x = Math.cos(planet.angle) * distance;
+                    planet.mesh.position.z = Math.sin(planet.angle) * distance;
+                    
+                    // Rotasi planet
+                    if (document.getElementById('autoRotate').checked) {
+                        planet.mesh.rotation.y += 0.01 * rotationSpeed;
+                    }
                 }
             });
             
             // Jika kamera sedang mengikuti planet, update posisi kamera
             if (isFollowingPlanet && cameraTarget) {
                 const planetPosition = cameraTarget.position.clone();
-                const cameraDistance = cameraTarget.geometry.parameters.radius * 8;
+                const cameraDistance = planetData[cameraTarget.userData?.planetKey]?.radius * 8 || 40;
                 
                 // Hitung posisi kamera yang mengikuti planet
                 camera.position.copy(planetPosition);
@@ -1134,7 +1181,9 @@
             
             // Update posisi semua label
             Object.values(solarSystem.labels).forEach(label => {
-                label.update();
+                if (label && label.update) {
+                    label.update();
+                }
             });
             
             controls.update();
